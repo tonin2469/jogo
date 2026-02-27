@@ -649,9 +649,79 @@
     </div>
 
     <script>
+        // ========== SISTEMA DE SALVAMENTO LOCAL ==========
+        const STORAGE_KEY = 'megaGamesData';
+
+        // Dados padrão
+        const defaultData = {
+            totalScore: 0,
+            gamesCompleted: 0,
+            gameScores: {
+                memory: 0,
+                simon: 0,
+                '2048': 0,
+                quiz: 0,
+                reflex: 0,
+                typing: 0,
+                flappy: 0,
+                snake: 0
+            },
+            lastPlayed: null,
+            playHistory: []
+        };
+
+        function loadGameData() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : defaultData;
+        }
+
+        function saveGameData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function addToPlayHistory(gameName, score) {
+            const data = loadGameData();
+            data.playHistory.push({
+                game: gameName,
+                score: score,
+                date: new Date().toLocaleString('pt-BR')
+            });
+            // Manter apenas os últimos 50 jogos
+            if (data.playHistory.length > 50) {
+                data.playHistory.shift();
+            }
+            data.lastPlayed = gameName;
+            saveGameData(data);
+        }
+
+        function updateGameScore(gameName, score) {
+            const data = loadGameData();
+            if (!data.gameScores[gameName]) {
+                data.gameScores[gameName] = 0;
+            }
+            data.gameScores[gameName] = Math.max(data.gameScores[gameName], score);
+            saveGameData(data);
+        }
+
         // VARIÁVEIS GLOBAIS
         let totalGameScore = 0;
         let gamesCompleted = 0;
+
+        // Carregar dados ao iniciar
+        function initializeGame() {
+            const data = loadGameData();
+            totalGameScore = data.totalScore;
+            gamesCompleted = data.gamesCompleted;
+            document.getElementById('totalScore').textContent = totalGameScore;
+            document.getElementById('gamesCompleted').textContent = gamesCompleted;
+            updateStats();
+        }
+
+        function updateStats() {
+            const data = loadGameData();
+            document.getElementById('totalScore').textContent = data.totalScore;
+            document.getElementById('gamesCompleted').textContent = data.gamesCompleted;
+        }
 
         function showScreen(screenId) {
             document.querySelectorAll('.game-screen').forEach(screen => {
@@ -666,8 +736,7 @@
                 screen.classList.remove('active');
             });
             document.getElementById('menu').style.display = 'block';
-            document.getElementById('totalScore').textContent = totalGameScore;
-            document.getElementById('gamesCompleted').textContent = gamesCompleted;
+            updateStats();
         }
 
         function startGame(game) {
@@ -753,9 +822,19 @@
 
                         if (memoryMatched === memoryCards.length) {
                             setTimeout(() => {
-                                alert(`🎉 Você venceu em ${memoryMoves} movimentos!`);
-                                totalGameScore += Math.max(0, 1000 - (memoryMoves * 20));
-                                gamesCompleted++;
+                                const score = Math.max(0, 1000 - (memoryMoves * 20));
+                                alert(`🎉 Você venceu em ${memoryMoves} movimentos! Pontos: ${score}`);
+                                
+                                let data = loadGameData();
+                                data.totalScore += score;
+                                data.gamesCompleted++;
+                                updateGameScore('memory', score);
+                                data.totalScore = Math.max(0, data.totalScore);
+                                saveGameData(data);
+                                addToPlayHistory('Memory', score);
+                                
+                                totalGameScore = data.totalScore;
+                                gamesCompleted = data.gamesCompleted;
                                 backToMenu();
                             }, 300);
                         }
@@ -824,8 +903,17 @@
 
                 if (playerSequence[playerSequence.length - 1] !== simonSequence[playerSequence.length - 1]) {
                     alert(`❌ Errou! Conseguiu ${simonSequence.length - 1} passos!`);
-                    totalGameScore += simonSequence.length * 50;
-                    gamesCompleted++;
+                    const score = simonSequence.length * 50;
+                    
+                    let data = loadGameData();
+                    data.totalScore += score;
+                    data.gamesCompleted++;
+                    updateGameScore('simon', score);
+                    saveGameData(data);
+                    addToPlayHistory('Simon', score);
+                    
+                    totalGameScore = data.totalScore;
+                    gamesCompleted = data.gamesCompleted;
                     simonPlaying = false;
                     document.getElementById('simonStart').disabled = false;
                     return;
@@ -834,8 +922,17 @@
                 if (playerSequence.length === simonSequence.length) {
                     if (simonSequence.length >= 10) {
                         alert(`🎉 Você venceu no nível ${simonSequence.length}!`);
-                        totalGameScore += simonSequence.length * 100;
-                        gamesCompleted++;
+                        const score = simonSequence.length * 100;
+                        
+                        let data = loadGameData();
+                        data.totalScore += score;
+                        data.gamesCompleted++;
+                        updateGameScore('simon', score);
+                        saveGameData(data);
+                        addToPlayHistory('Simon', score);
+                        
+                        totalGameScore = data.totalScore;
+                        gamesCompleted = data.gamesCompleted;
                         simonPlaying = false;
                         document.getElementById('simonStart').disabled = false;
                     } else {
@@ -947,8 +1044,17 @@
                     move2048(e.key);
                     if (score2048 > 5000) {
                         alert('🎉 Venceu!');
-                        totalGameScore += 500;
-                        gamesCompleted++;
+                        const score = 500;
+                        
+                        let data = loadGameData();
+                        data.totalScore += score;
+                        data.gamesCompleted++;
+                        updateGameScore('2048', score2048);
+                        saveGameData(data);
+                        addToPlayHistory('2048', score2048);
+                        
+                        totalGameScore = data.totalScore;
+                        gamesCompleted = data.gamesCompleted;
                         backToMenu();
                     }
                 }
@@ -981,8 +1087,17 @@
         function showQuestion() {
             if (currentQuiz >= quiz.length) {
                 alert(`🎉 Você acertou ${quizScore}/${quiz.length}!`);
-                totalGameScore += quizScore * 100;
-                gamesCompleted++;
+                const score = quizScore * 100;
+                
+                let data = loadGameData();
+                data.totalScore += score;
+                data.gamesCompleted++;
+                updateGameScore('quiz', score);
+                saveGameData(data);
+                addToPlayHistory('Quiz', score);
+                
+                totalGameScore = data.totalScore;
+                gamesCompleted = data.gamesCompleted;
                 backToMenu();
                 return;
             }
@@ -1040,8 +1155,17 @@
                     document.getElementById('reflexBtn').disabled = true;
                     const cpm = reflexClicks;
                     alert(`⏱️ Tempo acabou! Você clicou ${cpm} vezes!`);
-                    totalGameScore += cpm * 10;
-                    gamesCompleted++;
+                    
+                    const score = cpm * 10;
+                    let data = loadGameData();
+                    data.totalScore += score;
+                    data.gamesCompleted++;
+                    updateGameScore('reflex', score);
+                    saveGameData(data);
+                    addToPlayHistory('Reflex', score);
+                    
+                    totalGameScore = data.totalScore;
+                    gamesCompleted = data.gamesCompleted;
                     backToMenu();
                 }
             }, 1000);
@@ -1105,8 +1229,17 @@
             const input = document.getElementById('typingInput').value;
             const correct = input === typingTexts[typingIndex];
             alert(correct ? '✅ Digitação perfeita!' : '❌ Erros detectados!');
-            totalGameScore += correct ? 500 : 0;
-            gamesCompleted++;
+            
+            const score = correct ? 500 : 0;
+            let data = loadGameData();
+            data.totalScore += score;
+            data.gamesCompleted++;
+            updateGameScore('typing', score);
+            saveGameData(data);
+            addToPlayHistory('Speed Typing', score);
+            
+            totalGameScore = data.totalScore;
+            gamesCompleted = data.gamesCompleted;
             backToMenu();
         }
 
@@ -1138,8 +1271,17 @@
         function gameLoopFlappy() {
             if (!flappyGameActive) {
                 alert(`🎉 Você marcou ${flappyGameScore} pontos!`);
-                totalGameScore += flappyGameScore * 50;
-                gamesCompleted++;
+                const score = flappyGameScore * 50;
+                
+                let data = loadGameData();
+                data.totalScore += score;
+                data.gamesCompleted++;
+                updateGameScore('flappy', score);
+                saveGameData(data);
+                addToPlayHistory('Flappy', score);
+                
+                totalGameScore = data.totalScore;
+                gamesCompleted = data.gamesCompleted;
                 backToMenu();
                 return;
             }
@@ -1204,8 +1346,17 @@
                 if (!snakeGameActive) {
                     clearInterval(snakeInterval);
                     alert(`🐍 Pontuação: ${snakeScore}`);
-                    totalGameScore += snakeScore * 50;
-                    gamesCompleted++;
+                    const score = snakeScore * 50;
+                    
+                    let data = loadGameData();
+                    data.totalScore += score;
+                    data.gamesCompleted++;
+                    updateGameScore('snake', score);
+                    saveGameData(data);
+                    addToPlayHistory('Snake', score);
+                    
+                    totalGameScore = data.totalScore;
+                    gamesCompleted = data.gamesCompleted;
                     backToMenu();
                     return;
                 }
@@ -1219,8 +1370,17 @@
                     clearInterval(snakeInterval);
                     setTimeout(() => {
                         alert(`🐍 Pontuação: ${snakeScore}`);
-                        totalGameScore += snakeScore * 50;
-                        gamesCompleted++;
+                        const score = snakeScore * 50;
+                        
+                        let data = loadGameData();
+                        data.totalScore += score;
+                        data.gamesCompleted++;
+                        updateGameScore('snake', score);
+                        saveGameData(data);
+                        addToPlayHistory('Snake', score);
+                        
+                        totalGameScore = data.totalScore;
+                        gamesCompleted = data.gamesCompleted;
                         backToMenu();
                     }, 100);
                     return;
@@ -1232,8 +1392,17 @@
                         clearInterval(snakeInterval);
                         setTimeout(() => {
                             alert(`🐍 Pontuação: ${snakeScore}`);
-                            totalGameScore += snakeScore * 50;
-                            gamesCompleted++;
+                            const score = snakeScore * 50;
+                            
+                            let data = loadGameData();
+                            data.totalScore += score;
+                            data.gamesCompleted++;
+                            updateGameScore('snake', score);
+                            saveGameData(data);
+                            addToPlayHistory('Snake', score);
+                            
+                            totalGameScore = data.totalScore;
+                            gamesCompleted = data.gamesCompleted;
                             backToMenu();
                         }, 100);
                         return;
@@ -1281,6 +1450,9 @@
                 grid.appendChild(div);
             });
         }
+
+        // Inicializar o jogo ao carregar a página
+        window.addEventListener('DOMContentLoaded', initializeGame);
     </script>
 </body>
 </html>
