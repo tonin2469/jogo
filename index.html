@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEGA GAMES HARDCORE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid #ff6b6b;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 800px;
+            width: 95%;
+            max-height: 95vh;
+            overflow-y: auto;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                border-radius: 10px;
+                width: 98%;
+                max-height: 98vh;
+            }
+        }
+
+        .menu {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px #ff6b6b;
+            animation: pulse 2s infinite;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+            }
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #ffd700;
+            margin-bottom: 30px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+
+        .btn {
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border: 2px solid #ff6b6b;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            text-transform: uppercase;
+            touch-action: manipulation;
+        }
+
+        @media (max-width: 480px) {
+            .btn {
+                padding: 12px 15px;
+                font-size: 0.9em;
+            }
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ff6b6b;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .stats {
+            background: rgba(255, 107, 107, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .stats-text {
+            font-size: 1em;
+            margin: 5px 0;
+        }
+
+        .game-screen {
+            display: none;
+        }
+
+        .game-screen.active {
+            display: block;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .game-header h2 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            border-color: #4a5568;
+            padding: 10px 15px;
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+
+        .btn-back:hover {
+            box-shadow: 0 0 15px rgba(74, 85, 104, 0.7);
+        }
+
+        /* MEMORY GAME */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 480px) {
+            .memory-grid {
+                gap: 5px;
+            }
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 2em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .memory-card:hover {
+            transform: scale(1.05);
+        }
+
+        .memory-card.flipped {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .memory-card.matched {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        /* SIMON */
+        .simon-container {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .simon-board {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 30px 0;
+            width: 300px;
+            height: 300px;
+        }
+
+        @media (max-width: 480px) {
+            .simon-board {
+                width: 200px;
+                height: 200px;
+                gap: 8px;
+            }
+        }
+
+        .simon-btn {
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.5em;
+            transition: all 0.2s;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .simon-btn.red { background: #ff6b6b; }
+        .simon-btn.blue { background: #4ecdc4; }
+        .simon-btn.yellow { background: #ffd700; }
+        .simon-btn.green { background: #95e1d3; }
+
+        .simon-btn.active {
+            transform: scale(0.9);
+            box-shadow: 0 0 30px currentColor;
+        }
+
+        .simon-info {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+
+        /* 2048 */
+        .game-2048 {
+            margin: 20px auto;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            background: #bbada0;
+            border-radius: 10px;
+            padding: 10px;
+            width: 320px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 480px) {
+            .grid-container {
+                width: 240px;
+                gap: 5px;
+                padding: 5px;
+            }
+        }
+
+        .grid-cell {
+            aspect-ratio: 1;
+            background: #cdc1b4;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #776e65;
+        }
+
+        @media (max-width: 480px) {
+            .grid-cell {
+                font-size: 1.2em;
+            }
+        }
+
+        .grid-cell[data-value="0"] { background: #eee4da; }
+        .grid-cell[data-value="2"] { background: #eee4da; color: #776e65; }
+        .grid-cell[data-value="4"] { background: #ede0c8; color: #776e65; }
+        .grid-cell[data-value="8"] { background: #f2b179; color: white; }
+        .grid-cell[data-value="16"] { background: #f59563; color: white; }
+        .grid-cell[data-value="32"] { background: #f67c5f; color: white; }
+        .grid-cell[data-value="64"] { background: #f65e3b; color: white; }
+        .grid-cell[data-value="128"] { background: #edcf72; color: white; font-size: 1.5em; }
+        .grid-cell[data-value="256"] { background: #edcc61; color: white; font-size: 1.5em; }
+        .grid-cell[data-value="512"] { background: #edc850; color: white; font-size: 1.5em; }
+        .grid-cell[data-value="1024"] { background: #edc53f; color: white; font-size: 1.2em; }
+        .grid-cell[data-value="2048"] { background: #edc22e; color: white; font-size: 1.2em; }
+
+        /* QUIZ */
+        .quiz-container {
+            margin: 20px 0;
+        }
+
+        .question {
+            background: rgba(255, 107, 107, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+
+        .question strong {
+            color: #ffd700;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 480px) {
+            .options {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+        }
+
+        .option-btn {
+            padding: 12px;
+            background: rgba(74, 144, 226, 0.3);
+            border: 2px solid #4a90e2;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option-btn:hover {
+            background: rgba(74, 144, 226, 0.6);
+        }
+
+        .option-btn.correct {
+            background: #95e1d3;
+            border-color: #95e1d3;
+            color: black;
+        }
+
+        .option-btn.incorrect {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        /* REFLEX */
+        .reflex-container {
+            text-align: center;
+        }
+
+        .reflex-button {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 5px solid #ffd700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-size: 2em;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 30px auto;
+            transition: all 0.1s;
+            touch-action: manipulation;
+        }
+
+        @media (max-width: 480px) {
+            .reflex-button {
+                width: 150px;
+                height: 150px;
+                font-size: 1.5em;
+                border: 3px solid #ffd700;
+            }
+        }
+
+        .reflex-button:active {
+            transform: scale(0.95);
+        }
+
+        .reflex-button.clickable {
+            animation: pulse 0.5s;
+        }
+
+        /* TYPING */
+        .typing-container {
+            text-align: center;
+        }
+
+        .typing-text {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 1.5em;
+            min-height: 50px;
+        }
+
+        .typing-input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.2em;
+            border: 2px solid #ffd700;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            margin: 15px 0;
+        }
+
+        .typing-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        /* FLAPPY */
+        .flappy-container {
+            text-align: center;
+        }
+
+        canvas {
+            border: 3px solid #ffd700;
+            background: linear-gradient(180deg, #87ceeb 0%, #e0f6ff 100%);
+            display: block;
+            margin: 20px auto;
+            border-radius: 10px;
+            max-width: 100%;
+            height: auto;
+        }
+
+        @media (max-width: 480px) {
+            canvas {
+                max-width: 90vw;
+                height: auto;
+            }
+        }
+
+        /* SNAKE */
+        .snake-container {
+            text-align: center;
+        }
+
+        .snake-grid {
+            display: inline-grid;
+            grid-template-columns: repeat(10, 30px);
+            gap: 1px;
+            background: #000;
+            padding: 5px;
+            border-radius: 8px;
+            margin: 20px auto;
+        }
+
+        @media (max-width: 480px) {
+            .snake-grid {
+                grid-template-columns: repeat(10, 20px);
+            }
+        }
+
+        .snake-cell {
+            width: 30px;
+            height: 30px;
+            background: #333;
+        }
+
+        @media (max-width: 480px) {
+            .snake-cell {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        .snake-cell.snake {
+            background: #95e1d3;
+        }
+
+        .snake-cell.food {
+            background: #ff6b6b;
+        }
+
+        @keyframes pulse {
+            0%, 100% { text-shadow: 0 0 20px #ff6b6b; }
+            50% { text-shadow: 0 0 40px #ff6b6b; }
+        }
+
+        .score-display {
+            font-size: 1.3em;
+            color: #ffd700;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .timer {
+            font-size: 1.5em;
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- MENU PRINCIPAL -->
+        <div id="menu" class="menu">
+            <h1>⚡ MEGA GAMES ⚡</h1>
+            <p class="subtitle">HARDCORE - O DESAFIO SUPREMO</p>
+            <div class="games-grid">
+                <button class="btn" onclick="startGame('memory')">🧠 Memory</button>
+                <button class="btn" onclick="startGame('simon')">🎨 Simon</button>
+                <button class="btn" onclick="startGame('2048')">🎮 2048</button>
+                <button class="btn" onclick="startGame('quiz')">❓ Quiz</button>
+                <button class="btn" onclick="startGame('reflex')">⚡ Reflex</button>
+                <button class="btn" onclick="startGame('typing')">⌨️ Speed Type</button>
+                <button class="btn" onclick="startGame('flappy')">🐦 Flappy</button>
+                <button class="btn" onclick="startGame('snake')">🐍 Snake</button>
+            </div>
+            <div class="stats">
+                <div class="stats-text">🏆 Pontuação Total: <strong id="totalScore">0</strong></div>
+                <div class="stats-text">🎯 Jogos Completados: <strong id="gamesCompleted">0</strong></div>
+                <div class="stats-text">⚠️ Dificuldade: HARDCORE</div>
+            </div>
+        </div>
+
+        <!-- MEMORY GAME -->
+        <div id="memoryGame" class="game-screen">
+            <div class="game-header">
+                <h2>🧠 MEMORY - ENCONTRE OS PARES</h2>
+                <div class="score-display">Movimentos: <span id="memoryMoves">0</span> | Poucas tentativas!</div>
+            </div>
+            <div class="memory-grid" id="memoryGrid"></div>
+            <button class="btn btn-back" onclick="backToMenu()">← Voltar</button>
+        </div>
+
+        <!-- SIMON GAME -->
+        <div id="simonGame" class="game-screen">
+            <div class="game-header">
+                <h2>🎨 SIMON - MEMORIZE A SEQUÊNCIA</h2>
+            </div>
+            <div class="simon-container">
+                <div class="simon-board">
+                    <button class="simon-btn red" data-color="red"></button>
+                    <button class="simon-btn blue" data-color="blue"></button>
+                    <button class="simon-btn yellow" data-color="yellow"></button>
+                    <button class="simon-btn green" data-color="green"></button>
+                </div>
+                <div class="simon-info">
+                    <div>Nível: <span id="simonLevel">1</span></div>
+                    <div class="score-display">Sequência: <span id="simonSequence">0</span></div>
+                    <button class="btn" id="simonStart" onclick="startSimon()">INICIAR</button>
+                </div>
+            </div>
+            <button class="btn btn-back" onclick="backToMenu()">← Voltar</button>
+        </div>
+
+        <!-- 2048 GAME -->
+        <div id="2048Game" class="game-screen">
+            <div class="game-header">
+                <h2>🎮 2048 - COMBINE OS NÚMEROS</h2>
+                <div class="score-display">Pontuação: <span id="score2048">0</span></div>
+            </div>
+            <div class="game-2048">
+                <div class="grid-container" id="grid2048"></div>
+            </div>
+            <div style="text-align: center; margin: 15px 0;">
+                <p>Use SETAS para jogar | Combina blocos iguais para chegar a 2048</p>
+                <button class="btn" onclick="reset2048()">Nova Partida</button>
+            </div>
+            <button class="btn btn-back" onclick="backToMenu()">← Voltar</button>
+        </div>
+
+        <!-- QUIZ GAME -->
+        <div id="quizGame" class="game-screen">
+            <div class="game-header">
+                <h2>❓ QUIZ - PERGUNTAS MUITO DIFÍCEIS</h2>
+                <div class="score-display">Acertos: <span id="quizScore">0</span>/10</div>
+            </div>
+            <div class="quiz-container" id="quizContainer"></div>
+            <button class="btn btn-back" onclick="backToMenu()">← Voltar</button>
+        </div>
+
+        <!-- REFLEX GAME -->
+        <div id="reflexGame" class="game-screen">
+            <div class="game-header">
+                <h2>⚡ REFLEX - CLIQUE RÁPIDO</h2>
+                <div class="timer">Tempo: <span id="reflexTime">30</span>s</div>
+            </div>
+            <div class="reflex-container">
+                <button class="reflex-button" id="reflexBtn">CLIQUE!</button>
+                <div class="score-display">Cliques: <span id="reflexClicks">0</span></div>
+                <p id="reflexMessage" style="margin-top: 20px;"></p>
+            </div>
+            <button class="btn btn-back" onclick="backToMenu()">← Voltar</button>
+        </div>
+
+        <!-- TYPING GAME -->
+        <div id="typingGame" class="game-screen">
+            <div class="game-header">
+                <h2>⌨️ SPEED TYPING - DIGITE RÁPIDO</h2>
+                <div class="timer">Tempo: <span id="typingTime">30</span>s</div>
+            </div>
+            <div class="typing-container">
+                <div class="typing-text" id="typingText"></div>
+                <input type="text" class="typing-input" id="typingInput" placeholder="Comece a digitar..." />
+                <div class="score-display">Velocidade: <span id="typingSpeed">0</span> WPM</div>
+            </div>
+            <button class="btn btn-back" onclick="backToMenu()">← Voltar</button>
+        </div>
+
+        <!-- FLAPPY BIRD -->
+        <div id="flappyGame" class="game-screen">
+            <div class="game-header">
+                <h2>🐦 FLAPPY - DESVIE DOS CANOS</h2>
+                <div class="score-display">Pontuação: <span id="flappyScore">0</span></div>
+            </div>
+            <div class="flappy-container">
+                <canvas id="flappyCanvas" width="400" height="600"></canvas>
+                <p style="margin-top: 15px;">Clique ou Espaço para pular!</p>
+            </div>
+            <button class="btn btn-back" onclick="backToMenu()">← Voltar</button>
+        </div>
+
+        <!-- SNAKE GAME -->
+        <div id="snakeGame" class="game-screen">
+            <div class="game-header">
+                <h2>🐍 SNAKE - A COBRINHA CLÁSSICA</h2>
+                <div class="score-display">Pontuação: <span id="snakeScore">0</span></div>
+            </div>
+            <div class="snake-container">
+                <div class="snake-grid" id="snakeGrid"></div>
+                <p style="margin-top: 15px;">Use SETAS para mover a cobra</p>
+            </div>
+            <button class="btn btn-back" onclick="backToMenu()">← Voltar</button>
+        </div>
+    </div>
+
+    <script>
+        // VARIÁVEIS GLOBAIS
+        let totalGameScore = 0;
+        let gamesCompleted = 0;
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function backToMenu() {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById('menu').style.display = 'block';
+            document.getElementById('totalScore').textContent = totalGameScore;
+            document.getElementById('gamesCompleted').textContent = gamesCompleted;
+        }
+
+        function startGame(game) {
+            switch(game) {
+                case 'memory':
+                    initMemory();
+                    showScreen('memoryGame');
+                    break;
+                case 'simon':
+                    initSimon();
+                    showScreen('simonGame');
+                    break;
+                case 'quiz':
+                    initQuiz();
+                    showScreen('quizGame');
+                    break;
+                case 'reflex':
+                    initReflex();
+                    showScreen('reflexGame');
+                    break;
+                case 'typing':
+                    initTyping();
+                    showScreen('typingGame');
+                    break;
+                case 'flappy':
+                    initFlappy();
+                    showScreen('flappyGame');
+                    break;
+                case 'snake':
+                    initSnake();
+                    showScreen('snakeGame');
+                    break;
+                case '2048':
+                    init2048();
+                    showScreen('2048Game');
+                    break;
+            }
+        }
+
+        // ========== MEMORY GAME ==========
+        let memoryCards = [];
+        let memoryFlipped = [];
+        let memoryMatched = 0;
+        let memoryMoves = 0;
+
+        function initMemory() {
+            const symbols = ['🌟', '🎯', '🎲', '🎪', '🎭', '🎬', '🎤', '🎧'];
+            memoryCards = [...symbols, ...symbols].sort(() => Math.random() - 0.5);
+            memoryFlipped = [];
+            memoryMatched = 0;
+            memoryMoves = 0;
+            document.getElementById('memoryMoves').textContent = '0';
+
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = '';
+            memoryCards.forEach((symbol, index) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card';
+                card.textContent = '?';
+                card.onclick = () => flipCard(index);
+                grid.appendChild(card);
+            });
+        }
+
+        function flipCard(index) {
+            if (memoryFlipped.length >= 2 || memoryFlipped.includes(index)) return;
+            if (document.querySelectorAll('.memory-card')[index].classList.contains('matched')) return;
+
+            memoryFlipped.push(index);
+            document.querySelectorAll('.memory-card')[index].classList.add('flipped');
+            document.querySelectorAll('.memory-card')[index].textContent = memoryCards[index];
+
+            if (memoryFlipped.length === 2) {
+                memoryMoves++;
+                document.getElementById('memoryMoves').textContent = memoryMoves;
+
+                setTimeout(() => {
+                    const [first, second] = memoryFlipped;
+                    if (memoryCards[first] === memoryCards[second]) {
+                        document.querySelectorAll('.memory-card')[first].classList.add('matched');
+                        document.querySelectorAll('.memory-card')[second].classList.add('matched');
+                        memoryMatched += 2;
+
+                        if (memoryMatched === memoryCards.length) {
+                            setTimeout(() => {
+                                alert(`🎉 Você venceu em ${memoryMoves} movimentos!`);
+                                totalGameScore += Math.max(0, 1000 - (memoryMoves * 20));
+                                gamesCompleted++;
+                                backToMenu();
+                            }, 300);
+                        }
+                    } else {
+                        document.querySelectorAll('.memory-card')[first].classList.remove('flipped');
+                        document.querySelectorAll('.memory-card')[second].classList.remove('flipped');
+                        document.querySelectorAll('.memory-card')[first].textContent = '?';
+                        document.querySelectorAll('.memory-card')[second].textContent = '?';
+                    }
+                    memoryFlipped = [];
+                }, 800);
+            }
+        }
+
+        // ========== SIMON GAME ==========
+        let simonSequence = [];
+        let playerSequence = [];
+        let simonColors = ['red', 'blue', 'yellow', 'green'];
+        let simonPlaying = false;
+
+        function initSimon() {
+            simonSequence = [];
+            playerSequence = [];
+            document.getElementById('simonLevel').textContent = '1';
+            document.getElementById('simonSequence').textContent = '0';
+        }
+
+        function startSimon() {
+            if (simonPlaying) return;
+            simonSequence = [];
+            playerSequence = [];
+            simonPlaying = true;
+            document.getElementById('simonStart').disabled = true;
+            addToSequence();
+        }
+
+        function addToSequence() {
+            const randomColor = simonColors[Math.floor(Math.random() * 4)];
+            simonSequence.push(randomColor);
+            playerSequence = [];
+            document.getElementById('simonLevel').textContent = simonSequence.length;
+            document.getElementById('simonSequence').textContent = simonSequence.length;
+            playSequence();
+        }
+
+        function playSequence() {
+            let delay = 500;
+            simonSequence.forEach((color, index) => {
+                setTimeout(() => {
+                    flashButton(color);
+                }, delay * (index + 1));
+            });
+        }
+
+        function flashButton(color) {
+            const button = document.querySelector(`[data-color="${color}"]`);
+            button.classList.add('active');
+            setTimeout(() => button.classList.remove('active'), 300);
+        }
+
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('simon-btn') && simonPlaying) {
+                const color = e.target.dataset.color;
+                playerSequence.push(color);
+                flashButton(color);
+
+                if (playerSequence[playerSequence.length - 1] !== simonSequence[playerSequence.length - 1]) {
+                    alert(`❌ Errou! Conseguiu ${simonSequence.length - 1} passos!`);
+                    totalGameScore += simonSequence.length * 50;
+                    gamesCompleted++;
+                    simonPlaying = false;
+                    document.getElementById('simonStart').disabled = false;
+                    return;
+                }
+
+                if (playerSequence.length === simonSequence.length) {
+                    if (simonSequence.length >= 10) {
+                        alert(`🎉 Você venceu no nível ${simonSequence.length}!`);
+                        totalGameScore += simonSequence.length * 100;
+                        gamesCompleted++;
+                        simonPlaying = false;
+                        document.getElementById('simonStart').disabled = false;
+                    } else {
+                        setTimeout(() => addToSequence(), 1000);
+                    }
+                }
+            }
+        });
+
+        // ========== 2048 GAME ==========
+        let grid2048 = [];
+        let score2048 = 0;
+
+        function init2048() {
+            grid2048 = Array(16).fill(0);
+            score2048 = 0;
+            addRandom2048();
+            addRandom2048();
+            render2048();
+        }
+
+        function addRandom2048() {
+            const empty = grid2048.map((v, i) => v === 0 ? i : null).filter(v => v !== null);
+            if (empty.length > 0) {
+                const index = empty[Math.floor(Math.random() * empty.length)];
+                grid2048[index] = Math.random() < 0.9 ? 2 : 4;
+            }
+        }
+
+        function render2048() {
+            const container = document.getElementById('grid2048');
+            container.innerHTML = '';
+            grid2048.forEach(value => {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
+                cell.setAttribute('data-value', value);
+                cell.textContent = value || '';
+                container.appendChild(cell);
+            });
+            document.getElementById('score2048').textContent = score2048;
+        }
+
+        function move2048(direction) {
+            let moved = false;
+            const rotateGrid = (times) => {
+                for (let t = 0; t < times; t++) {
+                    const newGrid = Array(16).fill(0);
+                    for (let i = 0; i < 4; i++) {
+                        for (let j = 0; j < 4; j++) {
+                            newGrid[i * 4 + j] = grid2048[(3 - j) * 4 + i];
+                        }
+                    }
+                    grid2048 = newGrid;
+                }
+            };
+
+            if (direction === 'ArrowLeft') {
+                for (let i = 0; i < 4; i++) {
+                    const row = grid2048.slice(i * 4, i * 4 + 4);
+                    const compacted = compactRow(row);
+                    const merged = mergeRow(compacted);
+                    for (let j = 0; j < 4; j++) {
+                        grid2048[i * 4 + j] = merged[j];
+                    }
+                }
+            } else if (direction === 'ArrowRight') {
+                rotateGrid(2);
+                move2048('ArrowLeft');
+                rotateGrid(2);
+                return;
+            } else if (direction === 'ArrowUp') {
+                rotateGrid(1);
+                move2048('ArrowLeft');
+                rotateGrid(3);
+                return;
+            } else if (direction === 'ArrowDown') {
+                rotateGrid(3);
+                move2048('ArrowLeft');
+                rotateGrid(1);
+                return;
+            }
+            addRandom2048();
+            render2048();
+        }
+
+        function compactRow(row) {
+            return row.filter(v => v !== 0);
+        }
+
+        function mergeRow(row) {
+            for (let i = 0; i < row.length - 1; i++) {
+                if (row[i] === row[i + 1]) {
+                    row[i] *= 2;
+                    score2048 += row[i];
+                    row.splice(i + 1, 1);
+                }
+            }
+            while (row.length < 4) row.push(0);
+            return row;
+        }
+
+        function reset2048() {
+            init2048();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('2048Game').classList.contains('active')) {
+                if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+                    move2048(e.key);
+                    if (score2048 > 5000) {
+                        alert('🎉 Venceu!');
+                        totalGameScore += 500;
+                        gamesCompleted++;
+                        backToMenu();
+                    }
+                }
+            }
+        });
+
+        // ========== QUIZ GAME ==========
+        const quiz = [
+            { q: 'Qual é o número primo maior que 100 e menor que 110?', opts: ['101', '103', '105', '107'], ans: 0 },
+            { q: 'Qual presidente dos EUA não era pai?', opts: ['James Polk', 'James Buchanan', 'Andrew Jackson', 'John Adams'], ans: 1 },
+            { q: 'Qual é a capital da Austrália?', opts: ['Sydney', 'Melbourne', 'Canberra', 'Brisbane'], ans: 2 },
+            { q: 'Quantas luas Júpiter tem?', opts: ['16', '79', '63', '95'], ans: 1 },
+            { q: 'Em que ano terminou a Guerra de 30 anos?', opts: ['1645', '1648', '1650', '1655'], ans: 1 },
+            { q: 'Qual é o elemento químico mais pesado?', opts: ['Urânio', 'Plutônio', 'Oganesson', 'Livermorium'], ans: 2 },
+            { q: 'Qual é a raiz quadrada de 144?', opts: ['10', '11', '12', '13'], ans: 2 },
+            { q: 'Qual filósofo escreveu "Crítica da Razão Pura"?', opts: ['Hume', 'Kant', 'Hegel', 'Schopenhauer'], ans: 1 },
+            { q: 'Quantos ossos tem um adulto?', opts: ['186', '206', '226', '246'], ans: 1 },
+            { q: 'Qual é o maior planeta do sistema solar?', opts: ['Saturno', 'Netuno', 'Júpiter', 'Urano'], ans: 2 }
+        ];
+
+        let currentQuiz = 0;
+        let quizScore = 0;
+
+        function initQuiz() {
+            currentQuiz = 0;
+            quizScore = 0;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentQuiz >= quiz.length) {
+                alert(`🎉 Você acertou ${quizScore}/${quiz.length}!`);
+                totalGameScore += quizScore * 100;
+                gamesCompleted++;
+                backToMenu();
+                return;
+            }
+
+            const q = quiz[currentQuiz];
+            const html = `
+                <div class="question">
+                    <strong>Pergunta ${currentQuiz + 1}/${quiz.length}</strong><br>${q.q}
+                </div>
+                <div class="options">
+                    ${q.opts.map((opt, i) => 
+                        `<button class="option-btn" onclick="answerQuiz(${i})">${opt}</button>`
+                    ).join('')}
+                </div>
+            `;
+            document.getElementById('quizContainer').innerHTML = html;
+            document.getElementById('quizScore').textContent = quizScore;
+        }
+
+        function answerQuiz(idx) {
+            if (idx === quiz[currentQuiz].ans) {
+                quizScore++;
+                document.querySelectorAll('.option-btn')[idx].classList.add('correct');
+            } else {
+                document.querySelectorAll('.option-btn')[idx].classList.add('incorrect');
+                document.querySelectorAll('.option-btn')[quiz[currentQuiz].ans].classList.add('correct');
+            }
+
+            setTimeout(() => {
+                currentQuiz++;
+                showQuestion();
+            }, 1000);
+        }
+
+        // ========== REFLEX GAME ==========
+        let reflexClicks = 0;
+        let reflexTime = 30;
+        let reflexActive = true;
+
+        function initReflex() {
+            reflexClicks = 0;
+            reflexTime = 30;
+            reflexActive = true;
+            document.getElementById('reflexClicks').textContent = '0';
+            document.getElementById('reflexTime').textContent = '30';
+            document.getElementById('reflexBtn').style.display = 'block';
+            document.getElementById('reflexBtn').disabled = false;
+
+            const timer = setInterval(() => {
+                reflexTime--;
+                document.getElementById('reflexTime').textContent = reflexTime;
+                if (reflexTime <= 0) {
+                    clearInterval(timer);
+                    reflexActive = false;
+                    document.getElementById('reflexBtn').disabled = true;
+                    const cpm = reflexClicks;
+                    alert(`⏱️ Tempo acabou! Você clicou ${cpm} vezes!`);
+                    totalGameScore += cpm * 10;
+                    gamesCompleted++;
+                    backToMenu();
+                }
+            }, 1000);
+        }
+
+        document.getElementById('reflexBtn')?.addEventListener('click', () => {
+            if (reflexActive) {
+                reflexClicks++;
+                document.getElementById('reflexClicks').textContent = reflexClicks;
+            }
+        });
+
+        // ========== TYPING GAME ==========
+        const typingTexts = [
+            "O rápido raposa marrom salta sobre o cão preguiçoso",
+            "Programação é a arte de dizer a outro humano o que você quer que o computador faça",
+            "A inteligência artificial está mudando o mundo",
+            "Código limpo é melhor que código inteligente"
+        ];
+
+        let typingIndex = 0;
+        let typingTime = 30;
+        let typingActive = false;
+
+        function initTyping() {
+            typingIndex = Math.floor(Math.random() * typingTexts.length);
+            typingTime = 30;
+            typingActive = false;
+            document.getElementById('typingTime').textContent = '30';
+            document.getElementById('typingSpeed').textContent = '0';
+            document.getElementById('typingText').textContent = typingTexts[typingIndex];
+            document.getElementById('typingInput').value = '';
+            document.getElementById('typingInput').focus();
+
+            const input = document.getElementById('typingInput');
+            input.addEventListener('input', updateTypingSpeed);
+            input.addEventListener('keydown', () => {
+                if (!typingActive) {
+                    typingActive = true;
+                    let timer = setInterval(() => {
+                        typingTime--;
+                        document.getElementById('typingTime').textContent = typingTime;
+                        if (typingTime <= 0) {
+                            clearInterval(timer);
+                            endTyping();
+                        }
+                    }, 1000);
+                }
+            });
+        }
+
+        function updateTypingSpeed() {
+            const input = document.getElementById('typingInput').value;
+            const words = input.trim().split(/\s+/).length;
+            const wpm = Math.round(words / (30 - typingTime + 1) * 60);
+            document.getElementById('typingSpeed').textContent = Math.max(0, wpm);
+        }
+
+        function endTyping() {
+            document.getElementById('typingInput').disabled = true;
+            const input = document.getElementById('typingInput').value;
+            const correct = input === typingTexts[typingIndex];
+            alert(correct ? '✅ Digitação perfeita!' : '❌ Erros detectados!');
+            totalGameScore += correct ? 500 : 0;
+            gamesCompleted++;
+            backToMenu();
+        }
+
+        // ========== FLAPPY BIRD ==========
+        let flappyCanvas, flappyCtx;
+        let flappyBird = { x: 50, y: 150, width: 20, height: 20, velocity: 0 };
+        let flappyPipes = [];
+        let flappyGameScore = 0;
+        let flappyGameActive = true;
+
+        function initFlappy() {
+            flappyCanvas = document.getElementById('flappyCanvas');
+            flappyCtx = flappyCanvas.getContext('2d');
+            flappyBird = { x: 50, y: 150, width: 20, height: 20, velocity: 0 };
+            flappyPipes = [];
+            flappyGameScore = 0;
+            flappyGameActive = true;
+            document.getElementById('flappyScore').textContent = '0';
+
+            window.addEventListener('keydown', flappyJump);
+            flappyCanvas.addEventListener('click', flappyJump);
+            gameLoopFlappy();
+        }
+
+        function flappyJump() {
+            if (flappyGameActive) flappyBird.velocity = -8;
+        }
+
+        function gameLoopFlappy() {
+            if (!flappyGameActive) {
+                alert(`🎉 Você marcou ${flappyGameScore} pontos!`);
+                totalGameScore += flappyGameScore * 50;
+                gamesCompleted++;
+                backToMenu();
+                return;
+            }
+
+            flappyCtx.clearRect(0, 0, flappyCanvas.width, flappyCanvas.height);
+            flappyBird.velocity += 0.6;
+            flappyBird.y += flappyBird.velocity;
+
+            if (flappyBird.y + flappyBird.height > flappyCanvas.height || flappyBird.y < 0) {
+                flappyGameActive = false;
+            }
+
+            if (Math.random() < 0.01) {
+                const gap = 100;
+                const holeY = Math.random() * (flappyCanvas.height - gap - 100) + 50;
+                flappyPipes.push({ x: flappyCanvas.width, topHeight: holeY, gapHeight: gap, passed: false });
+            }
+
+            flappyPipes.forEach(pipe => {
+                pipe.x -= 5;
+                flappyCtx.fillStyle = '#228B22';
+                flappyCtx.fillRect(pipe.x, 0, 50, pipe.topHeight);
+                flappyCtx.fillRect(pipe.x, pipe.topHeight + pipe.gapHeight, 50, flappyCanvas.height);
+
+                if (!pipe.passed && pipe.x < flappyBird.x) {
+                    pipe.passed = true;
+                    flappyGameScore++;
+                    document.getElementById('flappyScore').textContent = flappyGameScore;
+                }
+
+                if (flappyBird.x < pipe.x + 50 && flappyBird.x + flappyBird.width > pipe.x) {
+                    if (flappyBird.y < pipe.topHeight || flappyBird.y + flappyBird.height > pipe.topHeight + pipe.gapHeight) {
+                        flappyGameActive = false;
+                    }
+                }
+            });
+
+            flappyPipes = flappyPipes.filter(p => p.x > -50);
+            flappyCtx.fillStyle = '#FFD700';
+            flappyCtx.fillRect(flappyBird.x, flappyBird.y, flappyBird.width, flappyBird.height);
+
+            requestAnimationFrame(gameLoopFlappy);
+        }
+
+        // ========== SNAKE GAME ==========
+        let snakeBody = [{ x: 5, y: 5 }];
+        let snakeFood = { x: 8, y: 8 };
+        let snakeDirection = { x: 1, y: 0 };
+        let snakeScore = 0;
+        let snakeGameActive = true;
+
+        function initSnake() {
+            snakeBody = [{ x: 5, y: 5 }];
+            snakeFood = { x: 8, y: 8 };
+            snakeDirection = { x: 1, y: 0 };
+            snakeScore = 0;
+            snakeGameActive = true;
+            document.getElementById('snakeScore').textContent = '0';
+            renderSnake();
+
+            const snakeInterval = setInterval(() => {
+                if (!snakeGameActive) {
+                    clearInterval(snakeInterval);
+                    alert(`🐍 Pontuação: ${snakeScore}`);
+                    totalGameScore += snakeScore * 50;
+                    gamesCompleted++;
+                    backToMenu();
+                    return;
+                }
+
+                const head = { ...snakeBody[0] };
+                head.x += snakeDirection.x;
+                head.y += snakeDirection.y;
+
+                if (head.x < 0 || head.x >= 10 || head.y < 0 || head.y >= 10) {
+                    snakeGameActive = false;
+                    clearInterval(snakeInterval);
+                    setTimeout(() => {
+                        alert(`🐍 Pontuação: ${snakeScore}`);
+                        totalGameScore += snakeScore * 50;
+                        gamesCompleted++;
+                        backToMenu();
+                    }, 100);
+                    return;
+                }
+
+                for (let segment of snakeBody) {
+                    if (head.x === segment.x && head.y === segment.y) {
+                        snakeGameActive = false;
+                        clearInterval(snakeInterval);
+                        setTimeout(() => {
+                            alert(`🐍 Pontuação: ${snakeScore}`);
+                            totalGameScore += snakeScore * 50;
+                            gamesCompleted++;
+                            backToMenu();
+                        }, 100);
+                        return;
+                    }
+                }
+
+                snakeBody.unshift(head);
+
+                if (head.x === snakeFood.x && head.y === snakeFood.y) {
+                    snakeScore += 10;
+                    document.getElementById('snakeScore').textContent = snakeScore;
+                    snakeFood = { x: Math.floor(Math.random() * 10), y: Math.floor(Math.random() * 10) };
+                } else {
+                    snakeBody.pop();
+                }
+
+                renderSnake();
+            }, 200);
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowUp' && snakeDirection.y === 0) snakeDirection = { x: 0, y: -1 };
+                if (e.key === 'ArrowDown' && snakeDirection.y === 0) snakeDirection = { x: 0, y: 1 };
+                if (e.key === 'ArrowLeft' && snakeDirection.x === 0) snakeDirection = { x: -1, y: 0 };
+                if (e.key === 'ArrowRight' && snakeDirection.x === 0) snakeDirection = { x: 1, y: 0 };
+            });
+        }
+
+        function renderSnake() {
+            const grid = document.getElementById('snakeGrid');
+            grid.innerHTML = '';
+            const cells = Array(100).fill(null);
+
+            snakeBody.forEach(segment => {
+                const idx = segment.y * 10 + segment.x;
+                cells[idx] = 'snake';
+            });
+
+            const foodIdx = snakeFood.y * 10 + snakeFood.x;
+            cells[foodIdx] = 'food';
+
+            cells.forEach(cell => {
+                const div = document.createElement('div');
+                div.className = 'snake-cell';
+                if (cell) div.classList.add(cell);
+                grid.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
